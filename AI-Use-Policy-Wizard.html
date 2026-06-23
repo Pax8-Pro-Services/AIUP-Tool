@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Use Policy Builder</title>
+<style>
+  :root{
+    --ink:#1a2233; --muted:#5b6678; --line:#e3e7ee; --bg:#f5f7fa;
+    --brand:#1452f0; --brand-dark:#0f3fbf; --ok:#1f9d57; --warn:#b86a00; --bad:#c0392b;
+    --card:#ffffff; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:840px;margin:0 auto;padding:28px 20px 80px}
+  header.app{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.2px}
+  .logo .mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--brand),#5b86ff);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800}
+  .tag{font-size:12px;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:0 1px 3px rgba(20,30,60,.04),0 8px 30px rgba(20,30,60,.05);padding:30px 32px}
+  h1{font-size:25px;margin:.1em 0 .3em;letter-spacing:-.4px}
+  h2{font-size:19px;margin:.2em 0 .5em;letter-spacing:-.3px}
+  p.lead{color:var(--muted);font-size:15px;margin:.2em 0 1.2em}
+  .progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 0 22px}
+  .progress > div{height:100%;background:linear-gradient(90deg,var(--brand),#5b86ff);width:0;transition:width .35s ease}
+  .stepmeta{font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:6px}
+  label.field{display:block;margin:14px 0 4px;font-weight:600;font-size:14px}
+  label.field .opt{font-weight:400;color:var(--muted)}
+  input[type=text],input[type=date],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);
+    border-radius:9px;font-size:14.5px;font-family:inherit;color:var(--ink);background:#fff}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(20,82,240,.12)}
+  textarea{min-height:74px;resize:vertical}
+  .hint{font-size:12.5px;color:var(--muted);margin:4px 0 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+  .check{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);
+    border-radius:10px;margin:8px 0;cursor:pointer;transition:.15s;background:#fff}
+  .check:hover{border-color:#c7d0e0;background:#fcfdff}
+  .check input{margin-top:3px;width:17px;height:17px;accent-color:var(--brand);flex:none}
+  .check .t{font-weight:600;font-size:14px}
+  .check .d{font-size:12.5px;color:var(--muted)}
+  .toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+  .toolgroup{margin:14px 0 4px;font-size:12px;font-weight:700;color:#34405a;text-transform:uppercase;letter-spacing:.05em}
+  .toolgroup .gh{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:12px;margin-left:6px}
+  .checksm{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line);
+    border-radius:9px;cursor:pointer;transition:.15s;background:#fff}
+  .checksm:hover{border-color:#c7d0e0;background:#fcfdff}
+  .checksm input{margin-top:2px;width:16px;height:16px;accent-color:var(--brand);flex:none}
+  .checksm .t{font-weight:600;font-size:13.5px;line-height:1.3}
+  .nav{display:flex;justify-content:space-between;margin-top:26px;gap:12px}
+  button{font-family:inherit;font-size:14.5px;font-weight:600;border-radius:10px;padding:11px 20px;cursor:pointer;border:1px solid transparent;transition:.15s}
+  .btn-primary{background:var(--brand);color:#fff} .btn-primary:hover{background:var(--brand-dark)}
+  .btn-ghost{background:#fff;color:var(--ink);border-color:var(--line)} .btn-ghost:hover{border-color:#c7d0e0}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed}
+  .btn-mini{font-size:13px;padding:7px 13px;background:#fff;color:var(--brand-dark);border:1px solid #c7d4f5;border-radius:9px}
+  .btn-mini:hover{background:#f3f7ff}
+  .disclaimer{background:#fbf7ee;border:1px solid #efe4c4;border-radius:10px;padding:14px 16px;font-size:13px;color:#6b5a22;margin:16px 0}
+  .step{display:none} .step.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  /* editable item rows */
+  .editrow{display:flex;gap:9px;align-items:flex-start;margin:8px 0}
+  .editrow input[type=checkbox]{margin-top:13px;width:17px;height:17px;accent-color:var(--brand);flex:none}
+  .editrow .body{flex:1}
+  .editrow .body input[type=text]{margin:0}
+  .editrow .body .sub{margin-top:6px}
+  .editrow .rm{flex:none;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;
+    width:34px;height:38px;font-size:17px;line-height:1;padding:0;cursor:pointer}
+  .editrow .rm:hover{border-color:#e3b4ad;color:var(--bad)}
+  .infobox{background:#eef3ff;border:1px solid #cfddfb;border-radius:10px;padding:12px 14px;font-size:13px;color:#243a66;margin:14px 0}
+  .infobox strong{color:#16306b}
+  .bakedbox{border:1px solid #d7e8db;background:#f6faf4;border-radius:10px;padding:12px 14px;margin:8px 0}
+  .bakedbox .t{font-weight:600;font-size:14px;color:#27462f}
+  .bakedbox .d{font-size:12.5px;color:#4d6353;margin-top:2px}
+  .bakedbox .always{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.04em}
+  .preview-toggle{font-size:13px;color:var(--brand-dark);cursor:pointer;font-weight:600;user-select:none;display:inline-flex;align-items:center;gap:5px;margin-top:5px}
+  .preview-box{display:none;border:1px dashed #c7d4f5;border-radius:10px;background:#fafbff;padding:12px 15px;margin:6px 0 4px;font-size:12.5px;color:#34405a}
+  .preview-box.show{display:block;animation:fade .2s ease}
+  .preview-box h4{margin:0 0 4px;font-size:12.5px;color:#16306b}
+  /* review + output */
+  .review-actions{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 18px}
+  .doc{border:1px solid var(--line);border-radius:10px;padding:30px 34px;background:#fff;max-height:520px;overflow:auto}
+  .doc h1.p{font-size:22px;border:none;margin:0 0 2px} .doc .sub{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+  .doc h2.p{font-size:15.5px;margin:22px 0 7px;padding-bottom:4px;border-bottom:2px solid var(--line)}
+  .doc h3.p{font-size:13.5px;margin:14px 0 5px;color:#34405a}
+  .doc p,.doc li{font-size:13px;color:#2a3346}
+  .doc table{width:100%;border-collapse:collapse;margin:8px 0 4px;font-size:12px}
+  .doc th,.doc td{border:1px solid #dfe4ee;padding:6px 9px;text-align:left;vertical-align:top}
+  .doc th{background:#f3f6fb;font-weight:700}
+  .doc .meta td:first-child{background:#f3f6fb;font-weight:700;width:34%}
+  .doc .disc{background:#fbf7ee;border:1px solid #efe4c4;padding:10px 12px;font-size:11.5px;color:#6b5a22;border-radius:6px}
+  .summary{font-size:13px;color:var(--muted);margin:4px 0 0}
+  .foot{text-align:center;font-size:12px;color:#9aa3b2;margin-top:26px}
+  @media (max-width:620px){.grid2{grid-template-columns:1fr}.toolgrid{grid-template-columns:1fr}.card{padding:22px 18px}}
+  /* print: only the policy */
+  @media print{
+    body *{visibility:hidden}
+    #printArea,#printArea *{visibility:visible}
+    #printArea{position:absolute;left:0;top:0;width:100%;padding:0;border:none;max-height:none;overflow:visible}
+    .doc{border:none;padding:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <div class="logo"><span class="mark">AI</span> AI Use Policy Builder</div>
+    <div class="tag">Runs entirely on your device · nothing is uploaded</div>
+  </header>
+
+  <div class="progress"><div id="bar"></div></div>
+  <div class="card">
+
+  <!-- STEP 0: WELCOME -->
+  <section class="step active" data-step="0">
+    <div class="stepmeta">Get started</div>
+    <h1>Build an AI Use Policy</h1>
+    <p class="lead">Answer a short set of questions and download a ready-to-adopt AI Use Policy in Word and PDF. Most people finish in under ten minutes. The policy grows only where your answers call for it. Building this for a client? Just enter their organization name in Step 1 and the whole policy is written in their name.</p>
+    <div class="infobox">Everything you type stays in your browser. Nothing is uploaded or sent anywhere. You can edit every word of the finished policy in Word after you download it.</div>
+    <div class="disclaimer"><strong>Use at your own risk.</strong> This tool produces a customizable template for informational purposes only. It is not legal, regulatory, or compliance advice. Have the organization's own legal, HR, and compliance advisors review the result before adopting it as policy.</div>
+    <div class="nav"><span></span><button class="btn-primary" onclick="go(1)">Start &rarr;</button></div>
+  </section>
+
+  <!-- STEP 1: ORG -->
+  <section class="step" data-step="1">
+    <div class="stepmeta">Step 1 of 6 · Organization</div>
+    <h2>The basics</h2>
+    <p class="lead">These fill the cover and signature blocks. Anything you skip becomes an editable placeholder.</p>
+    <label class="field">Who is this policy for?</label>
+    <select id="mode" onchange="onMode()">
+      <option value="own">My own organization</option>
+      <option value="msp">A client I provide IT services to (MSP / IT provider)</option>
+    </select>
+    <p class="hint" id="modeHint">Choose "client" if you're an MSP or consultant writing this on a client's behalf — it adds MSP-specific sections and a clean "prepared by" line.</p>
+    <label class="field" id="companyLabel">Organization name <span class="opt">— the company this policy is for</span></label>
+    <input type="text" id="company" placeholder="e.g., Summit IT Solutions" oninput="save()">
+    <div id="preparedByWrap" style="display:none">
+      <label class="field">Prepared by <span class="opt">— your firm, shown on the cover</span></label>
+      <input type="text" id="preparedBy" placeholder="e.g., Summit IT Solutions" oninput="save()">
+    </div>
+    <div class="grid2">
+      <div><label class="field">Policy owner — name <span class="opt">(a person, not a role)</span></label>
+        <input type="text" id="ownerName" placeholder="e.g., Jake Rivera" oninput="save()"></div>
+      <div><label class="field">Policy owner — title</label>
+        <input type="text" id="ownerTitle" placeholder="e.g., Service Desk Manager" oninput="save()"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="field">Effective date</label><input type="date" id="effDate" oninput="onEffDate()"></div>
+      <div><label class="field">How often will this policy be reviewed?</label>
+        <select id="cadence" onchange="onCadence()">
+          <option value="quarterly">Quarterly (recommended — AI changes fast)</option>
+          <option value="semi">Semi-annually</option>
+          <option value="annual">Annually</option>
+        </select>
+      </div>
+    </div>
+    <label class="field">First review date <span class="opt">— set from your cadence; you can override</span></label>
+    <input type="date" id="revDate" oninput="onRevDateManual()">
+    <p class="hint" id="revDateHint">Calculated from the effective date and cadence above. Clear it to recalculate.</p>
+    <div class="nav"><button class="btn-ghost" onclick="go(0)">&larr; Back</button><button class="btn-primary" onclick="go(2)">Continue &rarr;</button></div>
+  </section>
+
+  <!-- STEP 2: TOOLS -->
+  <section class="step" data-step="2">
+    <div class="stepmeta">Step 2 of 6 · Approved tools</div>
+    <h2>Which AI tools are approved for use?</h2>
+    <p class="lead">Check the tools your team is allowed to use. They become the <em>Approved Tools</em> list — the heart of the policy. <strong>Anything not on this list is not approved.</strong></p>
+    <div class="infobox">Only check tools used through a <strong>company-provided business or corporate account</strong>. The policy already prohibits personal or free accounts for work, and bars pasting sensitive data into consumer chat. You're choosing <em>which</em> approved tools are in play — not whether personal accounts are OK (they're not).</div>
+    <div id="toolList"></div>
+    <label class="field" style="margin-top:18px">Other tools <span class="opt">— anything not listed above, including AI built into software you already license (your RMM, PSA, CRM, help desk) or tools you've built yourself</span></label>
+    <div id="otherToolList"></div>
+    <button class="btn-mini" type="button" onclick="addOtherTool()">+ Add a tool</button>
+    <label class="check" style="margin-top:16px;border-color:#d9cffb;background:#faf8ff">
+      <input type="checkbox" id="usesApi" onchange="save()">
+      <span><span class="t">We build automations or AI agents on top of LLM APIs</span>
+      <span class="d">e.g., OpenAI, Anthropic, Azure OpenAI, AWS Bedrock, Google Vertex. Adds a Decision Authority section, data-sanitization rules, and security-by-design principles for the systems you build yourself.</span></span>
+    </label>
+    <div class="nav"><button class="btn-ghost" onclick="go(1)">&larr; Back</button><button class="btn-primary" onclick="go(3)">Continue &rarr;</button></div>
+  </section>
+
+  <!-- STEP 3: NEVER SHARE -->
+  <section class="step" data-step="3">
+    <div class="stepmeta">Step 3 of 6 · Data limits</div>
+    <h2>What must never go into any AI tool</h2>
+    <p class="lead">This list is absolute — these items stay out of <em>every</em> AI tool, approved or not, regardless of account type. The defaults are preset and protective. Untick anything that genuinely doesn't apply, edit the wording, or add your own.</p>
+    <div id="neverList"></div>
+    <button class="btn-mini" type="button" onclick="addNever()">+ Add a "never share" item</button>
+    <div class="infobox" style="margin-top:16px">If you handle regulated data (health, financial, government, education), your existing policies for that data — HIPAA, GLBA, FERPA, and similar — still govern it. This AI policy doesn't replace them; keep those updated to address AI use.</div>
+    <div class="nav"><button class="btn-ghost" onclick="go(2)">&larr; Back</button><button class="btn-primary" onclick="go(4)">Continue &rarr;</button></div>
+  </section>
+
+  <!-- STEP 4: HUMAN -->
+  <section class="step" data-step="4">
+    <div class="stepmeta">Step 4 of 6 · Human in the loop</div>
+    <h2>Where a human must stay in control</h2>
+    <p class="lead">AI may assist, but a person signs off before these go out or take effect. The defaults are preset — edit the wording, untick any that don't apply, or add your own.</p>
+    <div id="humanList"></div>
+    <button class="btn-mini" type="button" onclick="addHuman()">+ Add a decision type</button>
+    <div class="nav"><button class="btn-ghost" onclick="go(3)">&larr; Back</button><button class="btn-primary" onclick="go(5)">Review &rarr;</button></div>
+  </section>
+
+  <!-- STEP 5: REVIEW -->
+  <section class="step" data-step="5">
+    <div class="stepmeta">Step 5 of 6 · Review</div>
+    <h2>The policy</h2>
+    <p class="summary" id="summaryLine"></p>
+    <div class="infobox">Every section below is in your final document. Core sections — responsible-AI principles, training &amp; acknowledgment, and the incident log — are <strong>built in for every policy</strong>. To remove or reword anything, edit the Word file after download.</div>
+    <div class="review-actions">
+      <button class="btn-primary" onclick="downloadWord()">⬇ Download Word (.doc)</button>
+      <button class="btn-ghost" onclick="printPdf()">⬇ Save as PDF</button>
+      <button class="btn-ghost" onclick="go(1)">Edit answers</button>
+    </div>
+    <div class="doc" id="preview"></div>
+    <div class="nav"><button class="btn-ghost" onclick="go(4)">&larr; Back</button><button class="btn-primary" onclick="go(6)">Done &rarr;</button></div>
+  </section>
+
+  <!-- STEP 6: DONE -->
+  <section class="step" data-step="6">
+    <div class="stepmeta">Step 6 of 6 · Finish</div>
+    <h2>That's the draft 🎉</h2>
+    <p class="lead">You downloaded a customizable AI Use Policy. Before it's adopted:</p>
+    <ul>
+      <li>Replace any remaining <strong>[bracketed]</strong> placeholders.</li>
+      <li>Confirm the <strong>Approved Tools</strong> list with the team — no shadow tools missing.</li>
+      <li>Have <strong>legal / HR / compliance</strong> review it. This is a template, not legal advice.</li>
+      <li>Make sure your other policies (HIPAA, incident response, acceptable use) reference AI too.</li>
+      <li>Sign, date, and circulate — then hold to the review date.</li>
+    </ul>
+    <div class="review-actions">
+      <button class="btn-primary" onclick="downloadWord()">⬇ Download Word again</button>
+      <button class="btn-ghost" onclick="printPdf()">⬇ Save as PDF</button>
+      <button class="btn-ghost" onclick="go(0)">Start over</button>
+    </div>
+  </section>
+
+  </div>
+  <div class="foot">Prototype · single self-contained file · no internet connection required · built for Pax8 Academy</div>
+</div>
+
+<!-- hidden print target -->
+<div id="printArea" style="display:none"><div class="doc" id="printDoc"></div></div>
+
+<script>
+/* ---------- seed data ----------
+   Tools are a flat checked/unchecked list grouped only for scanability.
+   No embedded/consumer/platform tags drive logic anymore — checked = approved. */
+const TOOL_GROUPS = [
+  {group:'General-purpose AI assistants', note:'business / enterprise accounts', tools:[
+    'ChatGPT (OpenAI)','Claude (Anthropic)','Google Gemini','Microsoft 365 Copilot',
+    'Microsoft Copilot (web/Edge)','Perplexity','Grok (xAI)','Meta AI'
+  ]},
+  {group:'Specialized & creative AI', note:'', tools:[
+    'GitHub Copilot','Cursor','NotebookLM','Jasper','Adobe Firefly','Canva Magic Studio',
+    'Midjourney','Synthesia','Otter.ai'
+  ]},
+  {group:'AI platforms & APIs', note:'for automations / agents you build', tools:[
+    'Azure OpenAI Service','AWS Bedrock','Google Vertex AI','OpenAI API','Anthropic API'
+  ]}
+];
+const NEVER_SEED = [
+  'Passwords, API keys, or other credentials',
+  'Personal data protected by privacy law (health, financial, identity)',
+  'Details of an active security incident',
+  'Payment card or banking information',
+  'Anything covered by an NDA or marked confidential by a customer'
+];
+const HUMAN_SEED = [
+  {t:'Customer-facing output', d:'Emails, proposals, contracts, reports, social posts — reviewed before sending or publishing.', on:true},
+  {t:'Money decisions', d:'Pricing, billing, refunds, payments, contract terms — a human approves.', on:true},
+  {t:'People decisions', d:'Hiring, performance, discipline, terminations — human decision only.', on:true},
+  {t:'Security decisions', d:'Access, configuration, permission changes, incident response calls — human decision only.', on:true},
+  {t:'Legal decisions', d:'Conversations or topics that may be legally privileged, legal positions, regulatory or compliance calls — human decision only; route to counsel.', on:true}
+];
+
+/* live, editable state */
+let neverItems = [];   // {text, on}
+let humanItems = [];   // {t, d, on}
+let otherTools = [];   // {name}
+let revDateTouched = false;
+
+/* ---------- build dynamic lists ---------- */
+function buildTools(){
+  let h='';
+  TOOL_GROUPS.forEach((g,gi)=>{
+    h += `<div class="toolgroup">${g.group}${g.note?`<span class="gh">— ${g.note}</span>`:''}</div><div class="toolgrid">`;
+    g.tools.forEach((name,ti)=>{
+      const id = `t_${gi}_${ti}`;
+      h += `<label class="checksm"><input type="checkbox" data-tool="${id}" data-name="${escAttr(name)}" onchange="save()">
+        <span class="t">${name}</span></label>`;
+    });
+    h += `</div>`;
+  });
+  document.getElementById('toolList').innerHTML=h;
+}
+function renderOtherTools(){
+  const wrap=document.getElementById('otherToolList');
+  wrap.innerHTML = otherTools.map((o,i)=>`
+    <div class="editrow">
+      <div class="body">
+        <input type="text" value="${escAttr(o.name)}" placeholder="Tool name (e.g., ConnectWise Sidekick, our RMM's AI assistant)"
+          oninput="otherTools[${i}].name=this.value;save()">
+      </div>
+      <button class="rm" type="button" title="Remove" onclick="otherTools.splice(${i},1);renderOtherTools();save()">&times;</button>
+    </div>`).join('');
+}
+function addOtherTool(){ otherTools.push({name:''}); renderOtherTools(); }
+
+function renderNever(){
+  const wrap=document.getElementById('neverList');
+  wrap.innerHTML = neverItems.map((it,i)=>`
+    <div class="editrow">
+      <input type="checkbox" ${it.on?'checked':''} onchange="neverItems[${i}].on=this.checked;save()">
+      <div class="body">
+        <input type="text" value="${escAttr(it.text)}" oninput="neverItems[${i}].text=this.value;save()">
+      </div>
+      <button class="rm" type="button" title="Remove" onclick="neverItems.splice(${i},1);renderNever();save()">&times;</button>
+    </div>`).join('');
+}
+function addNever(){ neverItems.push({text:'',on:true}); renderNever(); }
+
+function renderHuman(){
+  const wrap=document.getElementById('humanList');
+  wrap.innerHTML = humanItems.map((it,i)=>`
+    <div class="editrow">
+      <input type="checkbox" ${it.on?'checked':''} onchange="humanItems[${i}].on=this.checked;save()">
+      <div class="body">
+        <input type="text" value="${escAttr(it.t)}" placeholder="Decision type" oninput="humanItems[${i}].t=this.value;save()">
+        <div class="sub"><input type="text" value="${escAttr(it.d)}" placeholder="Short description" oninput="humanItems[${i}].d=this.value;save()"></div>
+      </div>
+      <button class="rm" type="button" title="Remove" onclick="humanItems.splice(${i},1);renderHuman();save()">&times;</button>
+    </div>`).join('');
+}
+function addHuman(){ humanItems.push({t:'',d:'',on:true}); renderHuman(); }
+
+/* ---------- date logic: cadence drives review date ---------- */
+function addMonths(iso, months){
+  const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return '';
+  const day=d.getDate(); d.setMonth(d.getMonth()+months);
+  if(d.getDate()<day) d.setDate(0);
+  return d.toISOString().slice(0,10);
+}
+function cadenceMonths(c){ return c==='quarterly'?3:(c==='semi'?6:12); }
+function recomputeReviewDate(){
+  if(revDateTouched) return;
+  const eff=val('effDate'); if(!eff) return;
+  const next=addMonths(eff, cadenceMonths(val('cadence')));
+  if(next){ document.getElementById('revDate').value=next; }
+}
+function onEffDate(){ recomputeReviewDate(); save(); }
+function onCadence(){ recomputeReviewDate(); save(); }
+function onMode(){
+  const msp = val('mode')==='msp';
+  document.getElementById('preparedByWrap').style.display = msp ? 'block' : 'none';
+  document.getElementById('companyLabel').innerHTML = msp
+    ? 'Client / organization name <span class="opt">— the company this policy is for</span>'
+    : 'Organization name <span class="opt">— the company this policy is for</span>';
+  save();
+}
+function onRevDateManual(){ revDateTouched=true;
+  document.getElementById('revDateHint').textContent='Manually set. Clear this field to recalculate from the cadence.';
+  if(!val('revDate')){ revDateTouched=false;
+    document.getElementById('revDateHint').textContent='Calculated from the effective date and cadence above. Clear it to recalculate.';
+    recomputeReviewDate(); }
+  save(); }
+
+/* ---------- read form ---------- */
+function val(id){return (document.getElementById(id)||{}).value||''}
+function chk(id){return !!(document.getElementById(id)||{}).checked}
+function read(){
+  const selTools = [];
+  document.querySelectorAll('[data-tool]').forEach(el=>{ if(el.checked) selTools.push(el.getAttribute('data-name')); });
+  otherTools.filter(o=>o.name.trim()).forEach(o=> selTools.push(o.name.trim()));
+  const never = neverItems.filter(it=>it.on && it.text.trim()).map(it=>it.text.trim());
+  const human = humanItems.filter(it=>it.on && it.t.trim()).map(it=>({t:it.t.trim(), d:it.d.trim()}));
+  return {
+    company: val('company').trim()||'[Organization Name]',
+    ownerName: val('ownerName').trim()||'[Name]', ownerTitle: val('ownerTitle').trim()||'[Title]',
+    effDate: val('effDate')||'[YYYY-MM-DD]', revDate: val('revDate')||'[YYYY-MM-DD]',
+    isMsp: val('mode')==='msp',
+    preparedBy: val('preparedBy').trim(),
+    tools:selTools,
+    usesApi:chk('usesApi'),
+    never, human,
+    cadence: val('cadence')
+  };
+}
+function save(){ if(document.querySelector('.step[data-step="5"]').classList.contains('active')) render(); }
+
+/* ---------- policy generator ---------- */
+function cadenceWord(c){return c==='quarterly'?'quarterly':(c==='semi'?'semi-annually':'annually')}
+function esc(s){return (s||'').replace(/&(?!amp;)/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function escAttr(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function policyHtml(){
+  const d = read();
+  const co = esc(d.company);
+  const cadence = cadenceWord(d.cadence);
+  const apiNote = d.usesApi;
+  const isMsp = d.isMsp;
+  const sections = [];
+
+  const preparedRow = (isMsp && d.preparedBy) ? `<tr><td>Prepared by</td><td>${esc(d.preparedBy)}</td></tr>` : '';
+  let head = `<h1 class="p">${co} AI Use Policy</h1>
+    <div class="sub">How we use AI tools at ${co}, what data we may share with them, and what still needs a human.</div>
+    <table class="meta"><tr><td>Version</td><td>1.0</td></tr>
+    <tr><td>Effective date</td><td>${esc(d.effDate)}</td></tr>
+    <tr><td>Next review</td><td>${esc(d.revDate)} (${cadence})</td></tr>
+    <tr><td>Policy owner</td><td>${esc(d.ownerName)}, ${esc(d.ownerTitle)}</td></tr>
+    ${preparedRow}
+    <tr><td>Approved by</td><td>[Name, Title]</td></tr></table>
+    <p class="disc"><strong>Use at your own risk.</strong> This policy is provided as a customizable template for informational purposes only, with no warranties. It is not legal, regulatory, or compliance advice. ${co} is responsible for confirming it fits its business and regulatory obligations. Have your own legal, HR, and compliance advisors review it before adoption.</p>`;
+
+  // 1 Purpose & scope
+  sections.push(['Purpose and Scope',
+    `<p>This policy defines how AI tools may be used at ${co}, what data may be shared with them, what activities still require a human, and how new AI tools are approved.</p>
+     <p>It applies to all employees, contractors, and anyone using AI tools with ${co} data, devices, accounts, or networks — whether the tool is free, paid, embedded in another product, or accessed by web, app, or API.</p>
+     <p>Employees and contractors remain responsible for the AI output they accept, send, or act on. AI assistance does not transfer responsibility.</p>`]);
+
+  // 2 Responsible-AI principles (always baked in)
+  sections.push(['Responsible-AI Principles',
+    `<p>All use of AI at ${co} follows these principles:</p>
+     <ul>
+     <li><strong>Lawful and compliant.</strong> AI use complies with all applicable laws — data protection, employment, consumer, and intellectual-property rules. A policy does not override the law.</li>
+     <li><strong>Privacy and security by design.</strong> AI tools are configured and used to protect ${co} and customer data in line with our other security and privacy policies.</li>
+     <li><strong>Human oversight.</strong> AI outputs do not replace human judgment. We own our work even when AI helped produce it.</li>
+     <li><strong>Fairness and ethics.</strong> AI is never used to produce unlawful, discriminatory, harassing, deceptive, or defamatory content or outcomes.</li>
+     </ul>`]);
+
+  // 3 Approved tools (flat list, no tags)
+  let toolItems = d.tools.length
+    ? d.tools.map(t=>`<li>${esc(t)} — [list approved use cases]</li>`).join('')
+    : `<li>[Add the AI tools approved for use here.]</li>`;
+  sections.push(['Approved AI Tools',
+    `<p>The tools below are approved for use at ${co}. <strong>If a tool is not on this list, it is not approved</strong> — request approval before using it.</p>
+     <ul>${toolItems}</ul>
+     <p><strong>Accounts.</strong> Only company-provided business or corporate accounts may be used for ${co} work. Personal accounts, free-tier consumer accounts, and any AI tool not provided or approved by ${co} must not be used for company work or with company data. When in doubt, ask before you use it.</p>`]);
+
+  // 4 What must never go into AI
+  let neverBody = d.never.length ? `<ul>${d.never.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`
+    : `<ul><li>[Add the data types that must never enter any AI tool.]</li></ul>`;
+  sections.push(['What Must Never Go Into an AI Tool',
+    `<p>The following must never be entered into <em>any</em> AI tool — approved or not, regardless of account type:</p>
+     ${neverBody}
+     <p>If you handle regulated data (such as health, financial, government, or education records), your existing obligations and policies for that data continue to apply in full. This policy does not replace them.</p>`]);
+
+  // 5 Human in the loop (example text renders in description)
+  let humanRows = d.human.map(x=>`<tr><td><strong>${esc(x.t)}</strong></td><td>${x.d?esc(x.d)+' ':''}A human must review or approve before it goes out or takes effect.</td></tr>`).join('');
+  if(!humanRows) humanRows = `<tr><td><strong>[Decision type]</strong></td><td>A human must review or approve.</td></tr>`;
+  sections.push(['When a Human Must Still Be Involved',
+    `<p>AI may assist with the work below, but a human at ${co} must review or approve the result before it is sent, takes effect, or is acted on.</p>
+     <table><tr><th>Type of decision</th><th>Requirement</th></tr>${humanRows}</table>`]);
+
+  // 6 Decision authority + security-by-design (only when building on APIs)
+  if(apiNote){
+    sections.push(['Building AI Responsibly (Automations and Agents)',
+      `<p>When ${co} builds automations or agents on top of AI APIs, the following apply in addition to the rules above.</p>
+       <h3 class="p">Security and privacy by design</h3>
+       <p>Build with least-privilege access, log what the system does, and review the risk of each integration before connecting it. Do not connect tools or grant data access without deliberate thought about what could go wrong.</p>
+       <h3 class="p">Data sanitization</h3>
+       <p>Before confidential data enters an AI API, remove or replace organization names, individual names, IP addresses, hostnames, domains, and anything that identifies the source. If it can't be sanitized without losing necessary context, escalate to the Policy Owner.</p>
+       <h3 class="p">Decision authority</h3>
+       <p>For each automated workflow or agent, define what it may do on its own, what it may recommend for human confirmation, and what only a human may decide. The rows below are examples — replace them with your actual workflows.</p>
+       <table><tr><th>Workflow / decision</th><th>Authority</th><th>Notes</th></tr>
+       <tr><td>Ticket triage and categorization</td><td>Agent autonomous</td><td>Audited for misclassification.</td></tr>
+       <tr><td>Drafting client replies</td><td>Recommends; human confirms</td><td>Reviewed and edited before sending.</td></tr>
+       <tr><td>Access or permission changes</td><td>Human only</td><td>A human executes, even if AI surfaces the request.</td></tr>
+       <tr><td>[Your workflow]</td><td>[Autonomous / Recommends / Human only]</td><td>[Notes]</td></tr></table>
+       <p><strong>Override.</strong> The Policy Owner may suspend any AI tool or automation immediately. On suspected credential compromise, rotate all associated credentials before resuming.</p>`]);
+  }
+
+  // 7 Output verification & IP (always baked in)
+  sections.push(['Verifying Output and Intellectual Property',
+    `<p>AI can be confidently wrong. Before relying on, sending, or publishing AI output, a person verifies it is accurate, appropriate, and free of fabricated facts, quotes, or citations.</p>
+     <p><strong>Intellectual property.</strong> Do not paste third-party copyrighted material into AI tools beyond fair use, and review AI-generated text, images, or code before reuse — ownership and licensing of AI output can be unclear. When in doubt, treat AI output as a draft, not a finished asset.</p>`]);
+
+  // 8 Approving a new tool
+  if(apiNote || isMsp){
+    sections.push(['Approving and Deploying New AI Tools',
+      `<p>No new AI tool enters use at ${co} without completing this process. AI features inside tools you already license may use a lightweight path (confirm the vendor agreement covers AI, review data handling, document a go/no-go).</p>
+       <table><tr><th>Step</th><th>Action</th><th>Documentation</th></tr>
+       <tr><td>1</td><td>Proposal</td><td>Use case, data involved, expected outcome</td></tr>
+       <tr><td>2</td><td>Data review</td><td>Confirm alignment with the data rules above</td></tr>
+       <tr><td>3</td><td>Security review</td><td>Vendor data-processing agreement reviewed</td></tr>
+       <tr><td>4</td><td>Approval</td><td>Recorded in the Authorization Log</td></tr>
+       <tr><td>5</td><td>Pilot, then production</td><td>Scope, success criteria, documented go/no-go</td></tr></table>`]);
+  } else {
+    sections.push(['Approving a New AI Tool',
+      `<p>No new AI tool enters use at ${co} without these two steps:</p>
+       <table><tr><th>Step</th><th>Action</th></tr>
+       <tr><td>1 — Request</td><td>The employee submits the tool name, intended use, the data it will touch, and the vendor's terms covering AI.</td></tr>
+       <tr><td>2 — Decision</td><td>The Policy Owner approves or denies in writing. Approved tools are added to the Approved Tools list and the Authorization Log.</td></tr></table>`]);
+  }
+
+  // 9 Review, reporting, enforcement, training (training always baked in)
+  let reviewBody =
+    `<h3 class="p">Review</h3><p>The Policy Owner reviews this policy at least ${cadence}, and also whenever a new tool is approved or a significant AI incident occurs.</p>
+     <h3 class="p">Training and acknowledgment</h3><p>Everyone covered by this policy completes any assigned AI training and signs that they have read and understood it. ${isMsp?'Every technician and staff member with access to client systems must complete this before using AI tools on client work, and re-acknowledge when the policy is updated.':'Acknowledgment is recorded and refreshed when the policy is updated.'}</p>
+     <h3 class="p">Reporting</h3><p>Report any violation, suspected unauthorized tool, or accidental sharing of confidential data to the Policy Owner promptly. Good-faith reports will not result in retaliation.</p>
+     <h3 class="p">Enforcement</h3><p>Compliance is mandatory. Violations may lead to revoked access, retraining, or disciplinary action up to termination, per ${co}'s standard HR process.</p>
+     <h3 class="p">Exceptions</h3><p>Exceptions require written approval from the Policy Owner and a member of leadership, and are reviewed at the next review date.</p>`;
+  sections.push(['Review, Reporting, Training, and Enforcement', reviewBody]);
+
+  // 10 Acknowledgement
+  let ack = `<p>By signing below, I confirm I have read, understood, and agree to comply with the ${co} AI Use Policy.</p>
+     <table><tr><th>Name</th><th>Title / Department</th><th>Signature</th><th>Date</th></tr>
+     <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>
+     <tr><td>&nbsp;</td><td></td><td></td><td></td></tr></table>`;
+  sections.push(['Acknowledgment', ack]);
+
+  // render numbered
+  let body = head;
+  sections.forEach((s,i)=>{ body += `<h2 class="p">${i+1}. ${s[0]}</h2>${s[1]}`; });
+
+  // appendices (incident log always baked in)
+  body += `<h2 class="p">Appendix A — AI Tool Authorization Log</h2>
+    <p>Record every AI tool decision: approvals, approvals with restrictions, and denials.</p>
+    <table><tr><th>Date</th><th>Tool</th><th>Requested by</th><th>Decision</th><th>Approver</th></tr>
+    <tr><td>&nbsp;</td><td></td><td></td><td>Approved / With restrictions / Denied</td><td></td></tr>
+    <tr><td>&nbsp;</td><td></td><td></td><td>Approved / With restrictions / Denied</td><td></td></tr></table>`;
+  body += `<h2 class="p">Appendix B — AI Incident Log</h2>
+    <p>Any incident or potential misuse of AI — accidental data sharing, harmful or erroneous output that was acted on, or unauthorized tool use — must be disclosed and recorded here and handled under ${co}'s incident-response process.</p>
+    <table><tr><th>Date</th><th>Tool</th><th>What happened</th><th>Resolution</th><th>Policy change?</th></tr>
+    <tr><td>&nbsp;</td><td></td><td></td><td></td><td>Yes / No</td></tr>
+    <tr><td>&nbsp;</td><td></td><td></td><td></td><td>Yes / No</td></tr></table>`;
+  return body;
+}
+
+/* ---------- render / navigation ---------- */
+function render(){
+  const html = policyHtml();
+  document.getElementById('preview').innerHTML = html;
+  document.getElementById('printDoc').innerHTML = html;
+  const d = read();
+  const bits = [`${d.tools.length} approved tool${d.tools.length===1?'':'s'}`,
+    d.isMsp?'MSP profile':'general profile',
+    d.usesApi?'build-on-API sections on':null,
+    cadenceWord(d.cadence)+' review'].filter(Boolean);
+  document.getElementById('summaryLine').textContent = 'Includes: '+bits.join(' · ')+'. Edit anything in Word after download.';
+}
+let cur=0;
+function go(n){
+  cur=n;
+  document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active', +s.dataset.step===n));
+  document.getElementById('bar').style.width = Math.round((n/6)*100)+'%';
+  if(n===5) render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- downloads ---------- */
+function fileBase(){return (read().company.replace(/\[|\]/g,'').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'AI-Use-Policy')+'-AI-Use-Policy';}
+function triggerDownload(blob,name){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+}
+function downloadWord(){
+  const css = `<style>body{font-family:Calibri,Arial,sans-serif;color:#1a2233;font-size:11pt}
+    h1{font-size:18pt;margin:0 0 2pt} .sub{color:#5b6678;font-size:10.5pt;margin-bottom:12pt}
+    h2{font-size:13pt;border-bottom:1px solid #888;padding-bottom:2pt;margin:16pt 0 6pt}
+    h3{font-size:11pt;margin:10pt 0 3pt} table{border-collapse:collapse;width:100%;margin:6pt 0;font-size:10pt}
+    th,td{border:1px solid #999;padding:4pt 6pt;text-align:left;vertical-align:top} th{background:#eef2f8}
+    .meta td:first-child{background:#eef2f8;font-weight:bold;width:32%}
+    .disc{background:#fbf7ee;border:1px solid #e6d9b0;padding:6pt 8pt;font-size:9.5pt}</style>`;
+  const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8">'+css+'</head><body>'+policyHtml()+'</body></html>';
+  triggerDownload(new Blob(['﻿',html],{type:'application/msword'}), fileBase()+'.doc');
+}
+function printPdf(){ render(); document.getElementById('printArea').style.display='block';
+  window.print(); setTimeout(()=>document.getElementById('printArea').style.display='none',500); }
+
+/* ---------- init ---------- */
+function init(){
+  buildTools();
+  neverItems = NEVER_SEED.map(t=>({text:t,on:true}));
+  humanItems = HUMAN_SEED.map(h=>({t:h.t,d:h.d,on:h.on}));
+  otherTools = [];
+  renderNever(); renderHuman(); renderOtherTools();
+  onMode();
+  go(0);
+}
+init();
+</script>
+</body>
+</html>
