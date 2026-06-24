@@ -96,10 +96,14 @@
   @media (max-width:620px){.grid2{grid-template-columns:1fr}.toolgrid{grid-template-columns:1fr}.card{padding:22px 18px}}
   /* print: only the policy */
   @media print{
-    body *{visibility:hidden}
-    #printArea,#printArea *{visibility:visible}
-    #printArea{position:absolute;left:0;top:0;width:100%;padding:0;border:none;max-height:none;overflow:visible}
-    .doc{border:none;padding:0;max-height:none;overflow:visible}
+    /* Hide the app chrome; show only the print target, kept in normal flow so it paginates. */
+    body.printing > .wrap{display:none !important}
+    body.printing > #printArea{display:block !important}
+    #printArea{position:static;width:auto}
+    #printArea .doc{border:none;border-radius:0;padding:0;margin:0;max-height:none !important;overflow:visible !important;background:#fff}
+    /* avoid awkward breaks inside tables/headings */
+    #printArea h2,#printArea h3{break-after:avoid}
+    #printArea tr{break-inside:avoid}
   }
 </style>
 </head>
@@ -175,7 +179,7 @@
     <label class="check" style="margin-top:16px;border-color:#d9cffb;background:#faf8ff">
       <input type="checkbox" id="usesApi" onchange="save()">
       <span><span class="t">We build automations or AI agents on top of LLM APIs</span>
-      <span class="d">e.g., OpenAI, Anthropic, Azure OpenAI, AWS Bedrock, Google Vertex. Adds a Decision Authority section, data-sanitization rules, and security-by-design principles for the systems you build yourself.</span></span>
+      <span class="d">e.g., LLM APIs (OpenAI, Anthropic, Azure OpenAI, Bedrock, Vertex) or agent builders (Copilot Studio, Agentforce, Zapier Agents, n8n). Adds a Decision Authority section, data-sanitization rules, and security-by-design principles for the systems you build yourself.</span></span>
     </label>
     <div class="nav"><button class="btn-ghost" onclick="go(1)">&larr; Back</button><button class="btn-primary" onclick="go(3)">Continue &rarr;</button></div>
   </section>
@@ -254,6 +258,10 @@ const TOOL_GROUPS = [
   {group:'Specialized & creative AI', note:'', tools:[
     'GitHub Copilot','Cursor','NotebookLM','Jasper','Adobe Firefly','Canva Magic Studio',
     'Midjourney','Synthesia','Otter.ai'
+  ]},
+  {group:'AI agent & automation builders', note:'tools you configure to build agents/workflows', tools:[
+    'Microsoft Copilot Studio','Salesforce Agentforce','Google Agentspace / Vertex AI Agent Builder',
+    'Zapier Agents','n8n'
   ]},
   {group:'AI platforms & APIs', note:'for automations / agents you build', tools:[
     'Azure OpenAI Service','AWS Bedrock','Google Vertex AI','OpenAI API','Anthropic API'
@@ -565,8 +573,16 @@ function downloadWord(){
   const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8">'+css+'</head><body>'+policyHtml()+'</body></html>';
   triggerDownload(new Blob(['﻿',html],{type:'application/msword'}), fileBase()+'.doc');
 }
-function printPdf(){ render(); document.getElementById('printArea').style.display='block';
-  window.print(); setTimeout(()=>document.getElementById('printArea').style.display='none',500); }
+function printPdf(){
+  render();
+  const pa=document.getElementById('printArea');
+  pa.style.display='block';
+  document.body.classList.add('printing');
+  const cleanup=()=>{ document.body.classList.remove('printing'); pa.style.display='none'; window.removeEventListener('afterprint',cleanup); };
+  window.addEventListener('afterprint',cleanup);
+  window.print();
+  setTimeout(cleanup,1500); // fallback for browsers without afterprint
+}
 
 /* ---------- init ---------- */
 function init(){
