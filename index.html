@@ -99,7 +99,7 @@
     body *{visibility:hidden}
     #printArea,#printArea *{visibility:visible}
     #printArea{position:absolute;left:0;top:0;width:100%;padding:0;border:none;max-height:none;overflow:visible}
-    .doc{border:none;padding:0}
+    .doc{border:none;padding:0;max-height:none;overflow:visible}
   }
 </style>
 </head>
@@ -219,14 +219,14 @@
   <!-- STEP 6: DONE -->
   <section class="step" data-step="6">
     <div class="stepmeta">Step 6 of 6 · Finish</div>
-    <h2>That's the draft 🎉</h2>
-    <p class="lead">You downloaded a customizable AI Use Policy. Before it's adopted:</p>
+    <h2>You've got a solid policy 🎉</h2>
+    <p class="lead">Your AI Use Policy is complete and ready to use. A few steps to make it yours and make it official:</p>
     <ul>
-      <li>Replace any remaining <strong>[bracketed]</strong> placeholders.</li>
-      <li>Confirm the <strong>Approved Tools</strong> list with the team — no shadow tools missing.</li>
-      <li>Have <strong>legal / HR / compliance</strong> review it. This is a template, not legal advice.</li>
-      <li>Make sure your other policies (HIPAA, incident response, acceptable use) reference AI too.</li>
-      <li>Sign, date, and circulate — then hold to the review date.</li>
+      <li><strong>Make it yours</strong> — tweak any wording in the Word file, and fill in the few <strong>[bracketed]</strong> spots (like the approver's name).</li>
+      <li><strong>Confirm the tool list</strong> with your team so nothing in use is missing.</li>
+      <li><strong>Have it reviewed</strong> by legal / HR / compliance — this is a strong starting template, not legal advice, so a quick review keeps you covered.</li>
+      <li><strong>Connect it up</strong> — make sure your other policies (HIPAA, incident response, acceptable use) reference AI too.</li>
+      <li><strong>Make it official</strong> — sign, date, circulate, and hold to the review date.</li>
     </ul>
     <div class="review-actions">
       <button class="btn-primary" onclick="downloadWord()">⬇ Download Word again</button>
@@ -430,7 +430,7 @@ function policyHtml(){
 
   // 3 Approved tools (flat list, no tags)
   let toolItems = d.tools.length
-    ? d.tools.map(t=>`<li>${esc(t)} — [list approved use cases]</li>`).join('')
+    ? d.tools.map(t=>`<li>${esc(t)} — general business use, consistent with this policy <em>(narrow to specific use cases if needed)</em></li>`).join('')
     : `<li>[Add the AI tools approved for use here.]</li>`;
   sections.push(['Approved AI Tools',
     `<p>The tools below are approved for use at ${co}. <strong>If a tool is not on this list, it is not approved</strong> — request approval before using it.</p>
