@@ -623,13 +623,6 @@ function policyHtml(){
      <h3 class="p">Exceptions</h3><p>Exceptions require written approval from the Policy Owner and a member of leadership, and are reviewed at the next review date.</p>`;
   sections.push(['Review, Reporting, Training, and Enforcement', reviewBody]);
 
-  // 10 Acknowledgement
-  let ack = `<p>By signing below, I confirm I have read, understood, and agree to comply with the ${co} AI Use Policy.</p>
-     <table><tr><th>Name</th><th>Title / Department</th><th>Signature</th><th>Date</th></tr>
-     <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>
-     <tr><td>&nbsp;</td><td></td><td></td><td></td></tr></table>`;
-  sections.push(['Acknowledgment', ack]);
-
   // render numbered
   let body = head;
   sections.forEach((s,i)=>{ body += `<h2 class="p">${i+1}. ${s[0]}</h2>${s[1]}`; });
