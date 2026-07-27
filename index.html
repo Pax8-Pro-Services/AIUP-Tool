@@ -80,6 +80,7 @@
   .infobox strong{color:#ffffff;font-weight:600}
   .infobox p{margin:0}
   .infobox p + p{margin-top:8px}
+  .infobox ul + p{margin-top:8px}
   .infobox ul{margin:6px 0 0;padding-left:18px}
   .infobox li{margin:3px 0}
   .infobox .exlabel{display:block;margin-top:10px;font-weight:600;color:#fff}
@@ -162,6 +163,8 @@
       <ul>
         <li>Organization name — Summit IT Solutions</li>
         <li>Policy owner — Jake Rivera, Service Desk Manager</li>
+        <li>Incident reporting — email security@summitit.com, or open a ticket marked "AI incident"</li>
+        <li>Escalation — the Policy Owner, or any member of leadership</li>
       </ul>
     </div>
     <label class="field">Client / organization name <span class="opt">— the company this policy is for</span></label>
@@ -174,6 +177,10 @@
       <div><label class="field">Policy owner — title</label>
         <input type="text" id="ownerTitle" placeholder="Job title" oninput="save()"></div>
     </div>
+    <label class="field">How should someone report an AI incident? <span class="opt">— the channel or contact for reporting accidental data sharing, harmful output, or unauthorized tool use</span></label>
+    <input type="text" id="reportHow" placeholder="Reporting channel or contact" oninput="save()">
+    <label class="field">Where should someone go to escalate a concern about how AI is being used?</label>
+    <input type="text" id="escalateTo" placeholder="Escalation contact" oninput="save()">
     <div class="grid2">
       <div><label class="field">Effective date</label><input type="date" id="effDate" oninput="onEffDate()"></div>
       <div><label class="field">How often will this policy be reviewed?</label>
@@ -197,6 +204,7 @@
     <h2>Which AI tools are approved for use?</h2>
     <div class="infobox">
       <p>Check the tools the team is allowed to use — nothing is ticked for you. They become the <strong>Approved Tools</strong> list — the heart of the policy. <strong>Anything not on this list is not approved.</strong></p>
+      <p><strong>Exercise due care.</strong> A tool earns its place on this list the same way any other software does: through the company's existing supply chain and vendor due diligence process. Vet the AI vendor as you would any other vendor — review the vendor agreement, data handling, and security posture — before approving it here. AI tools are not an exception to your software selection process.</p>
       <p>Only check tools used through a <strong>company-provided business or corporate account</strong>. The policy already prohibits personal or free accounts for work, and bars pasting sensitive data into consumer chat.</p>
       <p>Use <strong>Other tools</strong> for anything not listed, including AI built into software already licensed (RMM, PSA, CRM, help desk) or tools built in-house.</p>
     </div>
@@ -239,7 +247,7 @@
     <div class="stepmeta">Step 3 of 6 · Prohibited Actions</div>
     <h2>What must never go into any AI tool</h2>
     <div class="infobox">
-      <p>This list is absolute — whatever you add here stays out of <strong>every</strong> AI tool, approved or not, regardless of account type. The list starts empty — add each item in your own words.</p>
+      <p>These are your <strong>Prohibited Actions</strong> — a list the company creates of data and materials that are not to be used in or with AI. The list is absolute: whatever you add here stays out of <strong>every</strong> AI tool, approved or not, regardless of account type. The list starts empty — add each item in your own words.</p>
       <p>If you handle regulated data (health, financial, government, education), your existing policies for that data — HIPAA, GLBA, FERPA, and similar — still govern it. This AI policy doesn't replace them.</p>
       <span class="exlabel">Examples you can copy:</span>
       <ul>
@@ -261,6 +269,7 @@
     <h2>High-risk use cases</h2>
     <div class="infobox">
       <p>These are your <strong>high-risk use cases</strong> — where a mistake carries real legal, financial, safety, or rights-related consequences. Here a <strong>human takes the lead</strong>: the responsible party owns the decision on how AI may be used, approves the result before it goes out or takes effect, and puts escalation and monitoring controls in place. Add each use case with a short description and who is responsible.</p>
+      <p>Expect <strong>increasing regulatory and contractual pressure</strong> to define your high-risk activities and use cases — regulators, insurers, and customer contracts are already asking for them. Being able to point to this list, and speak to the escalation controls behind each entry, is fast becoming table stakes.</p>
       <span class="exlabel">Examples you can copy:</span>
       <ul>
         <li><strong>Customer-facing output</strong> — Emails, proposals, contracts, reports, social posts.</li>
@@ -438,6 +447,7 @@ function read(){
     ownerName: val('ownerName').trim()||'[Name]', ownerTitle: val('ownerTitle').trim()||'[Title]',
     effDate: val('effDate')||'[YYYY-MM-DD]', revDate: val('revDate')||'[YYYY-MM-DD]',
     preparedBy: val('preparedBy').trim(),
+    reportHow: val('reportHow').trim(), escalateTo: val('escalateTo').trim(),
     tools:selTools,
     never, human,
     cadence: val('cadence')
@@ -512,21 +522,17 @@ function policyHtml(){
     `<p>AI can be confidently wrong. Before relying on, sending, or publishing AI output, a person verifies it is accurate, appropriate, and free of fabricated facts, quotes, or citations.</p>
      <p><strong>Intellectual property.</strong> Do not paste third-party copyrighted material into AI tools beyond fair use, and review AI-generated text, images, or code before reuse — ownership and licensing of AI output can be unclear. When in doubt, treat AI output as a draft, not a finished asset.</p>`]);
 
-  // 7 Approving a new tool
-  sections.push(['Approving and Deploying New AI Tools',
-    `<p>No new AI tool enters use at ${co} without completing this process. AI features inside tools you already license may use a lightweight path (confirm the vendor agreement covers AI, review data handling, document a go/no-go).</p>
-     <table><tr><th>Step</th><th>Action</th><th>Documentation</th></tr>
-     <tr><td>1</td><td>Proposal</td><td>Use case, data involved, expected outcome</td></tr>
-     <tr><td>2</td><td>Data review</td><td>Confirm alignment with the data rules above</td></tr>
-     <tr><td>3</td><td>Security review</td><td>Vendor data-processing agreement reviewed</td></tr>
-     <tr><td>4</td><td>Approval</td><td>Recorded in writing, with approver and date</td></tr>
-     <tr><td>5</td><td>Pilot, then production</td><td>Scope, success criteria, documented go/no-go</td></tr></table>`]);
+  // 7 Approving a new tool — defers to the org's existing software selection process
+  sections.push(['Approving New AI Tools',
+    `<p>AI tools are not an exception to how ${co} selects software. A new AI tool is evaluated and approved through ${co}'s existing software selection, supply chain, and vendor due diligence process — the same process used for any other vendor or product — with attention to the AI-specific rules in this policy: the data limits above, how the vendor handles and trains on submitted data, and whether the vendor agreement covers AI.</p>
+     <p>Approval is granted by the Policy Owner, recorded in writing with approver and date, and the tool is added to the Approved Tools list. AI features inside software ${co} already licenses still require this review before use — confirm the existing vendor agreement covers the AI features and review their data handling.</p>`]);
 
   // 8 Review, reporting, enforcement, training (training always baked in)
   let reviewBody =
     `<h3 class="p">Review</h3><p>The Policy Owner reviews this policy at least ${cadence}, and also whenever a new tool is approved or a significant AI incident occurs.</p>
      <h3 class="p">Training and acknowledgment</h3><p>Everyone covered by this policy completes any assigned AI training and signs that they have read and understood it. Every technician and staff member with access to client systems must complete this before using AI tools on client work, and re-acknowledge when the policy is updated.</p>
-     <h3 class="p">Reporting</h3><p>Report any violation, suspected unauthorized tool, or accidental sharing of confidential data to the Policy Owner promptly. Good-faith reports will not result in retaliation.</p>
+     <h3 class="p">Reporting</h3><p>Report any AI incident promptly — accidental sharing of confidential data, harmful or erroneous output that was acted on, a suspected unauthorized tool, or any other violation of this policy. How to report: ${d.reportHow?esc(d.reportHow):'[reporting channel or contact]'}. Good-faith reports will not result in retaliation.</p>
+     <h3 class="p">Escalation</h3><p>Anyone concerned with how AI is being used at ${co} — by a person, a tool, or an automated workflow — should escalate to ${d.escalateTo?esc(d.escalateTo):'[escalation contact]'}. Concerns can be raised without filing a formal incident report.</p>
      <h3 class="p">Enforcement</h3><p>Compliance is mandatory. Violations may lead to revoked access, retraining, or disciplinary action up to termination, per ${co}'s standard HR process.</p>
      <h3 class="p">Exceptions</h3><p>Exceptions require written approval from the Policy Owner and a member of leadership, and are reviewed at the next review date.</p>`;
   sections.push(['Review, Reporting, Training, and Enforcement', reviewBody]);
