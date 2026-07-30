@@ -1,34 +1,33 @@
 # AI Use Policy Builder
 
-A single-file web wizard that helps a small business or an MSP (writing for a client) produce a customizable AI Use Policy, downloadable as Word or PDF. Built for Pax8 Academy.
+A single-file web wizard that helps an MSP produce a customizable AI Use Policy for a client (or for their own shop), downloadable as Word or PDF. Built for Pax8 Academy.
 
-The entire app is one self-contained `index.html` — all HTML, CSS, and JavaScript inline. No build step, no dependencies, no backend. Everything runs in the visitor's browser; nothing is uploaded or stored anywhere.
+The entire app is one self-contained `index.html` — all HTML, CSS, and JavaScript inline. No build step, no backend. Everything runs in the visitor's browser; nothing is uploaded or stored anywhere. The only external resource is the `html-docx-js` CDN script used for the `.docx` download — if it fails to load (e.g. offline), the app falls back to a `.doc` download.
 
 ## What it does
 
-The user answers a short set of questions (most finish in under ten minutes), and the wizard assembles a ready-to-edit policy:
+The user walks through six steps and the wizard assembles a ready-to-edit policy. Nothing is pre-filled or pre-ticked: every field, list, and checkbox starts blank, and example wording lives only in the blue instruction box at the top of each step, so the policy says exactly what the user decides it says.
 
-- **Organization & cadence** — who the policy is for, the policy owner, effective date, and review cadence (defaults to quarterly; the first review date is calculated automatically).
-- **Mode** — "my own organization" or "a client I provide IT services to (MSP)." The MSP path adds a clean *Prepared by* line, MSP-specific training language, and a fuller tool-approval process.
-- **Approved tools** — a checklist of ~25 current AI tools plus free-form entries for anything else (e.g. AI built into an RMM/PSA/CRM). Anything not listed is, by policy, not approved.
-- **What must never go into AI** — an editable, absolute "never share" list (credentials, regulated personal data, payment info, etc.).
-- **Human-in-the-loop** — decision types that always require a person (customer-facing output, money, people, security, legal).
-- **Build-on-API toggle** — if the org builds automations/agents on LLM APIs, adds security-by-design, data-sanitization, and decision-authority sections.
+- **Organization** — who the policy is for, a *Prepared by* line for the MSP, the policy owner, incident-reporting and escalation contacts, effective date, and review cadence (the first review date is calculated from the cadence; quarterly is recommended).
+- **Approved tools** — a checklist of 27 current AI tools (assistants, creative tools, agent builders, platforms/APIs) plus free-form entries for anything else. Anything not listed is, by policy, not approved.
+- **Prohibited actions** — an editable, absolute list of use cases, data, or materials that must never be used in or with any AI tool.
+- **High-risk use cases (Human in the Lead)** — use cases that require the express review and approval of a named responsible party.
+- **Review & download** — a live preview of the full policy, then Word or PDF.
 
-Core sections — responsible-AI principles, training & acknowledgment, an authorization log, and an incident log — are built into every policy. To remove or reword anything, the user edits the downloaded Word file.
+Core sections are built into every policy: responsible-AI principles, output verification & intellectual property, and review/reporting/training/enforcement. Skipped fields become **[bracketed]** placeholders, and the user can remove or reword anything by editing the downloaded Word file.
 
-Output: **Download Word (.doc)** or **Save as PDF** (via the browser's print dialog).
+Output: **Download Word (.docx)** or **Save as PDF** (via the browser's print dialog).
 
 ## Deploy (GitHub Pages)
 
 1. Add this file to the repo as **`index.html`** so it serves at the bare path.
 2. Enable GitHub Pages for the branch/folder.
 
-It is fully static and self-contained, so no other configuration is needed. (Optional: add an empty `.nojekyll` file to skip Jekyll processing — not required, the file contains no Liquid tags.)
+It is fully static, so no other configuration is needed. (Optional: add an empty `.nojekyll` file to skip Jekyll processing — not required, the file contains no Liquid tags.)
 
 ## Editing
 
-Open `index.html` in any editor. To change the tool list, the "never share" defaults, or the human-in-the-loop defaults, edit the seed arrays near the top of the `<script>` block (`TOOL_GROUPS`, `NEVER_SEED`, `HUMAN_SEED`). The policy text is generated in the `policyHtml()` function below them.
+Open `index.html` in any editor. To change the tool checklist, edit the `TOOL_GROUPS` array near the top of the `<script>` block. The prohibited-actions and high-risk lists have no seed data — they start empty by design. The policy text is generated in the `policyHtml()` function; the per-step guidance lives in each step's `.infobox` block.
 
 ## Important
 
