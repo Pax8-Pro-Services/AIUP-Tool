@@ -296,7 +296,7 @@
   <section class="step" data-step="6">
     <div class="stepmeta">Step 6 of 6 · Finish</div>
     <h2>You've got a solid policy 🎉</h2>
-    <div class="infobox">Your AI Use Policy is complete and ready to use. A few steps to make it yours and make it official:</div>
+    <div class="infobox">Your AI Use Policy is complete and ready to review. A few steps to make it yours and make it official:</div>
     <ul>
       <li><strong>Make it yours</strong> — tweak any wording in the Word file, and fill in the few <strong>[bracketed]</strong> spots (like the approver's name).</li>
       <li><strong>Confirm the tool list</strong> with your team so nothing in use is missing.</li>
@@ -471,7 +471,7 @@ function policyHtml(){
 
   // 1 Purpose & scope
   sections.push(['Purpose and Scope',
-    `<p>This policy defines how AI tools may be used at ${co}, what data may be shared with them, what activities still require a human, and how new AI tools are approved.</p>
+    `<p>This policy defines how AI tools may be used at ${co}, including key principles, approved and prohibited tools and uses, and how new AI tools are approved.</p>
      <p>It applies to all employees, contractors, and anyone using AI tools with ${co} data, devices, accounts, or networks — whether the tool is free, paid, embedded in another product, or accessed by web, app, or API.</p>
      <p>Employees and contractors remain responsible for the AI output they accept, send, or act on. AI assistance does not transfer responsibility.</p>`]);
 
@@ -497,16 +497,16 @@ function policyHtml(){
   // 4 What must never go into AI
   let neverBody = d.never.length ? `<ul>${d.never.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`
     : `<ul><li>[Add the data types that must never enter any AI tool.]</li></ul>`;
-  sections.push(['What Must Never Go Into an AI Tool',
-    `<p>The following must never be entered into <em>any</em> AI tool — approved or not, regardless of account type:</p>
+  sections.push(['Prohibited Uses of AI',
+    `<p>AI tools must never be used for or with the following:</p>
      ${neverBody}
-     <p>If you handle regulated data (such as health, financial, government, or education records), your existing obligations and policies for that data continue to apply in full. This policy does not replace them.</p>`]);
+     <p>All existing company policies and procedures for data continue to apply in full. This policy does not replace them.</p>`]);
 
   // 5 High-risk use cases: human in the lead
   let humanRows = d.human.map(x=>`<tr><td><strong>${esc(x.t)}</strong>${x.d?'<br>'+esc(x.d):''}</td><td>${x.r?esc(x.r):'[Responsible party]'}</td></tr>`).join('');
   if(!humanRows) humanRows = `<tr><td><strong>[High-risk use case]</strong></td><td>[Responsible party]</td></tr>`;
   sections.push(['High-Risk Use Cases (Human in the Lead)',
-    `<p>The use cases below are high-risk: a mistake carries legal, financial, safety, or rights-related consequences. AI may assist, but for each one a human leads. The responsible party owns the decision on how AI may be used, reviews and approves the result before it is sent, takes effect, or is acted on, and ensures appropriate escalation and monitoring controls are in place — including how issues are raised, to whom, and how AI-assisted work in this area is checked over time.</p>
+    `<p>The use cases below are deemed to be high-risk. No one should create, build, or implement such use cases without the express review and approval of the responsible party listed below.</p>
      <table><tr><th>High-risk use case</th><th>Responsible party</th></tr>${humanRows}</table>`]);
 
   // 6 Output verification & IP (always baked in)
@@ -516,14 +516,13 @@ function policyHtml(){
 
   // 7 Approving a new tool — defers to the org's existing software selection process
   sections.push(['Approving New AI Tools',
-    `<p>AI tools are not an exception to how ${co} selects software. A new AI tool is evaluated and approved through ${co}'s existing software selection, supply chain, and vendor due diligence process — the same process used for any other vendor or product — with attention to the AI-specific rules in this policy: the data limits above, how the vendor handles and trains on submitted data, and whether the vendor agreement covers AI.</p>
-     <p>Approval is granted by the Policy Owner, recorded in writing with approver and date, and the tool is added to the Approved Tools list. AI features inside software ${co} already licenses still require this review before use — confirm the existing vendor agreement covers the AI features and review their data handling.</p>`]);
+    `<p>If you wish to use a tool that is not currently approved for AI use, you can make a request to [name or contact].</p>`]);
 
   // 8 Review, reporting, enforcement, training (training always baked in)
   let reviewBody =
     `<h3 class="p">Review</h3><p>The Policy Owner reviews this policy at least ${cadence}, and also whenever a new tool is approved or a significant AI incident occurs.</p>
-     <h3 class="p">Training and acknowledgment</h3><p>Everyone covered by this policy completes any assigned AI training and signs that they have read and understood it. Every technician and staff member with access to client systems must complete this before using AI tools on client work, and re-acknowledge when the policy is updated.</p>
-     <h3 class="p">Reporting</h3><p>Report any AI incident promptly — accidental sharing of confidential data, harmful or erroneous output that was acted on, a suspected unauthorized tool, or any other violation of this policy. How to report: ${d.reportHow?esc(d.reportHow):'[reporting channel or contact]'}. Good-faith reports will not result in retaliation.</p>
+     <h3 class="p">Training</h3><p>Everyone covered by this policy must complete any assigned AI training issued by the company.</p>
+     <h3 class="p">Reporting</h3><p>Report any AI incident promptly — accidental sharing of confidential data, harmful or erroneous output that was acted on, a suspected unauthorized tool, or any other violation of this policy. How to report: ${d.reportHow?esc(d.reportHow):'[reporting channel or contact]'}.</p>
      <h3 class="p">Escalation</h3><p>Anyone concerned with how AI is being used at ${co} — by a person, a tool, or an automated workflow — should escalate to ${d.escalateTo?esc(d.escalateTo):'[escalation contact]'}. Concerns can be raised without filing a formal incident report.</p>
      <h3 class="p">Enforcement</h3><p>Compliance is mandatory. Violations may lead to revoked access, retraining, or disciplinary action up to termination, per ${co}'s standard HR process.</p>
      <h3 class="p">Exceptions</h3><p>Exceptions require written approval from the Policy Owner and a member of leadership, and are reviewed at the next review date.</p>`;
