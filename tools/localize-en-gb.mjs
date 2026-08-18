@@ -21,7 +21,8 @@ const RULES = [
   // document setup for the /en-gb/ subdirectory
   ['<html lang="en">', '<html lang="en-GB">', 1],
   ['src="Pax8-WHT.svg"', 'src="../Pax8-WHT.svg"', 1],
-  ['<a class="lang" href="en-gb/">UK English</a>', '<a class="lang" href="../">US English</a>', 1],
+  ['<span aria-current="page" title="You are viewing the US English version">US English</span><a href="en-gb/" title="Switch to the UK English version (also for Australia and New Zealand)">UK English</a>',
+   '<a href="../" title="Switch to the US English version">US English</a><span aria-current="page" title="You are viewing the UK English version (also for Australia and New Zealand)">UK English</span>', 1],
   // spelling localisations (user-visible copy only)
   ['Step 1 of 6 · Organization', 'Step 1 of 6 · Organisation', 1],
   ['Organization name — Summit IT Solutions', 'Organisation name — Summit IT Solutions', 1],

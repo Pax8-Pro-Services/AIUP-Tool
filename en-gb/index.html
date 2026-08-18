@@ -24,9 +24,14 @@
   .pax8-logo{height:28px;width:auto;display:block}
   .logo-divider{display:inline-block;width:1px;height:22px;background:rgba(255,255,255,0.20);margin:0 4px}
   .logo-label{font-size:14px;font-weight:500;color:rgba(255,255,255,0.70);letter-spacing:0}
-  .tag{font-size:12px;color:var(--muted)}
-  .tag a.lang{color:var(--cyan);text-decoration:none}
-  .tag a.lang:hover{text-decoration:underline}
+  .tag{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:14px}
+  /* Language switch: segmented control, current version highlighted */
+  .lang-switch{display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,0.20);border-radius:8px;overflow:hidden;font-size:12px;font-weight:600;letter-spacing:.02em}
+  .lang-switch a,.lang-switch span{padding:4px 10px;text-decoration:none;line-height:1.4}
+  .lang-switch a{color:rgba(255,255,255,0.60);transition:.15s}
+  .lang-switch a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+  .lang-switch span[aria-current]{background:var(--brand);color:#fff}
+  @media (max-width:620px){header.app{flex-wrap:wrap;gap:8px}.tag{width:100%;justify-content:space-between}}
   .rainbow{height:4px;background:linear-gradient(90deg,#0447BF,#10D6D3,#03DE91,#EAC106,#DF0C13);margin-bottom:20px;border-radius:2px}
   .card{background:var(--card);border:1px solid rgba(255,255,255,0.10);border-radius:var(--radius);
     box-shadow:0 0 0 1px rgba(4,71,191,0.15),0 8px 30px rgba(0,0,0,0.6);padding:30px 32px}
@@ -131,7 +136,8 @@
       <span class="logo-divider"></span>
       <span class="logo-label">AI Use Policy Builder</span>
     </div>
-    <div class="tag">Runs entirely on your device · nothing is uploaded · <a class="lang" href="../">US English</a></div>
+    <div class="tag">Runs entirely on your device · nothing is uploaded
+      <nav class="lang-switch" aria-label="Language version"><a href="../" title="Switch to the US English version">US English</a><span aria-current="page" title="You are viewing the UK English version (also for Australia and New Zealand)">UK English</span></nav></div>
   </header>
   <div class="rainbow"></div>
 
