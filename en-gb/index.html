@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- Last Update: 2026JUL30 -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en-GB"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Use Policy Builder</title>
@@ -127,11 +127,11 @@
 <div class="wrap">
   <header class="app">
     <div class="logo">
-      <img src="Pax8-WHT.svg" alt="Pax8" class="pax8-logo">
+      <img src="../Pax8-WHT.svg" alt="Pax8" class="pax8-logo">
       <span class="logo-divider"></span>
       <span class="logo-label">AI Use Policy Builder</span>
     </div>
-    <div class="tag">Runs entirely on your device · nothing is uploaded · <a class="lang" href="en-gb/">UK English</a></div>
+    <div class="tag">Runs entirely on your device · nothing is uploaded · <a class="lang" href="../">US English</a></div>
   </header>
   <div class="rainbow"></div>
 
@@ -158,21 +158,21 @@
 
   <!-- STEP 1: ORG -->
   <section class="step" data-step="1">
-    <div class="stepmeta">Step 1 of 6 · Organization</div>
+    <div class="stepmeta">Step 1 of 6 · Organisation</div>
     <h2>The basics</h2>
     <div class="infobox">
       <p>These details fill the cover block of the policy. Every field starts blank — <strong>anything you skip becomes an editable placeholder</strong> in the downloaded document, so you can come back to it later.</p>
       <span class="exlabel">Examples:</span>
       <ul>
-        <li>Organization name — Summit IT Solutions</li>
+        <li>Organisation name — Summit IT Solutions</li>
         <li>Policy owner — Jake Rivera, Service Desk Manager</li>
         <li>Incident reporting — email security@summitit.com, or open a ticket marked "AI incident"</li>
         <li>Escalation — the Policy Owner, or any member of leadership</li>
       </ul>
     </div>
-    <label class="field">Client / organization name <span class="opt">— the company this policy is for</span></label>
-    <input type="text" id="company" placeholder="Organization name" oninput="save()">
-    <label class="field">Prepared by <span class="opt">— your firm, shown on the cover; leave blank if writing for your own organization</span></label>
+    <label class="field">Client / organisation name <span class="opt">— the company this policy is for</span></label>
+    <input type="text" id="company" placeholder="Organisation name" oninput="save()">
+    <label class="field">Prepared by <span class="opt">— your firm, shown on the cover; leave blank if writing for your own organisation</span></label>
     <input type="text" id="preparedBy" placeholder="Your firm's name" oninput="save()">
     <div class="grid2">
       <div><label class="field">Policy owner — name <span class="opt">(a person, not a role)</span></label>
@@ -180,7 +180,7 @@
       <div><label class="field">Policy owner — title</label>
         <input type="text" id="ownerTitle" placeholder="Job title" oninput="save()"></div>
     </div>
-    <label class="field">How should someone report an AI incident? <span class="opt">— the channel or contact for reporting accidental data sharing, harmful output, or unauthorized tool use</span></label>
+    <label class="field">How should someone report an AI incident? <span class="opt">— the channel or contact for reporting accidental data sharing, harmful output, or unauthorised tool use</span></label>
     <input type="text" id="reportHow" placeholder="Reporting channel or contact" oninput="save()">
     <label class="field">Where should someone go to escalate a concern about how AI is being used?</label>
     <input type="text" id="escalateTo" placeholder="Escalation contact" oninput="save()">
@@ -206,7 +206,7 @@
     <div class="stepmeta">Step 2 of 6 · Approved tools</div>
     <h2>Which AI tools are approved for use?</h2>
     <div class="infobox">
-      <p>Check the tools the team is allowed to use — nothing is ticked for you. They become the <strong>Approved Tools</strong> list — the heart of the policy. <strong>Anything not on this list is not approved.</strong></p>
+      <p>Tick the tools the team is allowed to use — nothing is ticked for you. They become the <strong>Approved Tools</strong> list — the heart of the policy. <strong>Anything not on this list is not approved.</strong></p>
       <p><strong>Exercise due care.</strong> A tool earns its place on this list the same way any other software does: through the company's existing supply chain and vendor due diligence process. Only select tools that have been properly vetted and approved by your company.</p>
       <p>Only check tools used through a <strong>company-provided business or corporate account</strong>. The policy already prohibits personal or free accounts for work, and bars pasting sensitive data into consumer chat.</p>
       <p><strong>Other tools</strong> allows you to add other approved tools that have not been listed below.</p>
@@ -284,7 +284,7 @@
   <section class="step" data-step="5">
     <div class="stepmeta">Step 5 of 6 · Review</div>
     <h2>The policy</h2>
-    <div class="infobox">Every section below is in your final document. Core sections — responsible-AI principles, output verification, and training &amp; acknowledgment — are <strong>built in for every policy</strong>. To remove or reword anything, edit the Word file after download.</div>
+    <div class="infobox">Every section below is in your final document. Core sections — responsible-AI principles, output verification, and training &amp; acknowledgement — are <strong>built in for every policy</strong>. To remove or reword anything, edit the Word file after download.</div>
     <p class="summary" id="summaryLine"></p>
     <div class="review-actions">
       <button class="btn-primary" onclick="downloadWord()">⬇ Download Word (.docx)</button>
@@ -438,7 +438,7 @@ function read(){
   const never = neverItems.filter(it=>it.on && it.text.trim()).map(it=>it.text.trim());
   const human = humanItems.filter(it=>it.on && it.t.trim()).map(it=>({t:it.t.trim(), d:it.d.trim(), r:it.r.trim()}));
   return {
-    company: val('company').trim()||'[Organization Name]',
+    company: val('company').trim()||'[Organisation Name]',
     ownerName: val('ownerName').trim()||'[Name]', ownerTitle: val('ownerTitle').trim()||'[Title]',
     effDate: val('effDate')||'[YYYY-MM-DD]', revDate: val('revDate')||'[YYYY-MM-DD]',
     preparedBy: val('preparedBy').trim(),
@@ -484,7 +484,7 @@ function policyHtml(){
      <ul>
      <li><strong>Lawful and compliant.</strong> AI use complies with all applicable laws — data protection, employment, consumer, and intellectual-property rules. A policy does not override the law.</li>
      <li><strong>Privacy and security by design.</strong> AI tools are configured and used to protect ${co} and customer data in line with our other security and privacy policies.</li>
-     <li><strong>Human oversight.</strong> AI outputs do not replace human judgment. We own our work even when AI helped produce it.</li>
+     <li><strong>Human oversight.</strong> AI outputs do not replace human judgement. We own our work even when AI helped produce it.</li>
      <li><strong>Fairness and ethics.</strong> AI is never used to produce unlawful, discriminatory, harassing, deceptive, or defamatory content or outcomes.</li>
      </ul>`]);
 
@@ -525,7 +525,7 @@ function policyHtml(){
   let reviewBody =
     `<h3 class="p">Review</h3><p>The Policy Owner reviews this policy at least ${cadence}, and also whenever a new tool is approved or a significant AI incident occurs.</p>
      <h3 class="p">Training</h3><p>Everyone covered by this policy must complete any assigned AI training issued by the company.</p>
-     <h3 class="p">Reporting</h3><p>Report any AI incident promptly — accidental sharing of confidential data, harmful or erroneous output that was acted on, a suspected unauthorized tool, or any other violation of this policy. How to report: ${d.reportHow?esc(d.reportHow):'[reporting channel or contact]'}.</p>
+     <h3 class="p">Reporting</h3><p>Report any AI incident promptly — accidental sharing of confidential data, harmful or erroneous output that was acted on, a suspected unauthorised tool, or any other violation of this policy. How to report: ${d.reportHow?esc(d.reportHow):'[reporting channel or contact]'}.</p>
      <h3 class="p">Escalation</h3><p>Anyone concerned with how AI is being used at ${co} — by a person, a tool, or an automated workflow — should escalate to ${d.escalateTo?esc(d.escalateTo):'[escalation contact]'}. Concerns can be raised without filing a formal incident report.</p>
      <h3 class="p">Enforcement</h3><p>Compliance is mandatory. Violations may lead to revoked access, retraining, or disciplinary action up to termination, per ${co}'s standard HR process.</p>
      <h3 class="p">Exceptions</h3><p>Exceptions require written approval from the Policy Owner and a member of leadership, and are reviewed at the next review date.</p>`;
