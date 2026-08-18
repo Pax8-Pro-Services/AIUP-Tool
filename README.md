@@ -18,6 +18,18 @@ Core sections are built into every policy: responsible-AI principles, output ver
 
 Output: **Download Word (.docx)** or **Save as PDF** (via the browser's print dialog).
 
+## British English version
+
+A UK English (en-GB) version of the wizard lives at **`en-gb/index.html`** and is linked from the page header of each version (the standard subdirectory-per-locale URL structure, e.g. `example.com/en-gb/`). It is identical to the US version apart from localisations — spellings like *organisation*, *unauthorised*, *acknowledgement* — and never differs in meaning. The verbatim legal disclaimer is identical in both.
+
+Don't edit `en-gb/index.html` by hand. It is generated from `index.html`:
+
+```
+node tools/localize-en-gb.mjs
+```
+
+Run this after any change to `index.html`. Each localisation rule asserts an expected match count, so the script fails loudly if an edit to `index.html` breaks a rule — update the rule list in `tools/localize-en-gb.mjs`, regenerate, and commit both files. If the site gets a permanent public URL, add bidirectional `hreflang` tags (`en-US`, `en-GB`, `x-default`) to both pages — they require absolute URLs, so they can't be pre-filled here.
+
 ## Deploy (GitHub Pages)
 
 1. Add this file to the repo as **`index.html`** so it serves at the bare path.
